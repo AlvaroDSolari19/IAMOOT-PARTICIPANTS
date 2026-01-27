@@ -13,8 +13,6 @@ export default function Login() {
         navigate('/upload'); 
     }
 
-    const { currentLanguage } = useContext(LanguageContext);
-
     const pageText = {
         EN: {
             mainTitle: 'IAMOOT 2026 - Access the Platform',
@@ -39,6 +37,7 @@ export default function Login() {
         }
     }
 
+    const { currentLanguage } = useContext(LanguageContext);
     const actualText = pageText[currentLanguage];
 
     return <div>
