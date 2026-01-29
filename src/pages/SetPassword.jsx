@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Alert, Button, Card, Form } from 'react-bootstrap';
 
 import { LanguageContext } from '../context/LanguageContext';
@@ -82,6 +82,6 @@ export default function SetPassword() {
         {passwordStatus === 'error' && (
             <Alert variant='danger' className='mt-3 text-center fw-semibold'>{actualText.errorMsg}</Alert>
         )}
-        
+
     </div>
 }
