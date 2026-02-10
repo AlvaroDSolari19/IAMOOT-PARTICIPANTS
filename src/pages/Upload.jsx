@@ -1,4 +1,5 @@
 import { useContext, useState } from 'react'
+import { useForm } from 'react-hook-form';
 import { Alert, Button, Card, Form, ListGroup } from 'react-bootstrap'
 
 import { LanguageContext } from '../context/LanguageContext'
@@ -7,8 +8,27 @@ export default function Upload() {
 
     const [fileStatus, setFileStatus] = useState('idle');
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+    const {
+        register,
+        handleSubmit,
+        watch,
+        formState: { errors, isSubmitting }
+    } = useForm({
+        defaultValues: {
+            stateFile: null,
+            victimFile: null,
+            confirmFinal: false
+        }
+    })
+
+    const confirmFinal = watch('confirmFinal');
+
+    const onSubmit = async (someData) => {
+        console.log('RHF submit payload:', {
+            confirmFinal: someData.confirmFinal,
+            stateFileName: someData.stateFile?.[0]?.name,
+            victimFileName: someData.victimFile?.[0]?.name
+        })
         setFileStatus('success');
     }
 
@@ -82,22 +102,24 @@ export default function Upload() {
             </Card.Body>
         </Card>
 
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmit(onSubmit)}>
             <Form.Group className='mb-3 px-4'>
                 <Form.Label className='fw-bold'>{actualText.stateLabel}</Form.Label>
-                <Form.Control type='file' />
+                <Form.Control type='file' accept='.docx' {...register('stateFile')} />
             </Form.Group>
 
             <Form.Group className='mb-3 px-4'>
                 <Form.Label className='fw-bold'>{actualText.victimLabel}</Form.Label>
-                <Form.Control type='file' />
+                <Form.Control type='file' accept='.docx' {...register('victimFile')} />
             </Form.Group>
 
             <Form.Group className='mb-3 px-4'>
-                <Form.Check type='checkbox' label={actualText.confirmLabel} />
+                <Form.Check type='checkbox' label={actualText.confirmLabel} {...register('confirmFinal')} />
             </Form.Group>
 
-            <div className='d-grid'><Button type='submit'>{actualText.submitBtn}</Button></div>
+            <div className='d-grid'>
+                <Button type='submit' disabled={!confirmFinal || isSubmitting}>{actualText.submitBtn}</Button>
+            </div>
         </Form>
 
         {fileStatus === 'success' && (
