@@ -1,6 +1,6 @@
 import { useContext, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Alert, Button, Card, Form } from 'react-bootstrap';
 
 import { LanguageContext } from '../context/LanguageContext';
@@ -12,7 +12,7 @@ const pageText = {
         emailLabel: 'Participant Email',
         submitBtn: 'Send Password Link',
         successMsg: 'If the information matches our records, an email has been sent with a password setup link.',
-        returnBtn: 'Return to Login', 
+        returnLink: 'Return to Login', 
         teamRequired: 'Team ID is required.',
         emailRequired: 'Email is required.'
     },
@@ -22,7 +22,7 @@ const pageText = {
         emailLabel: 'Correo Electrónico del Participante',
         submitBtn: 'Enviar Enlace de Contraseña',
         successMsg: 'Si la información coincide con nuestros registros, se ha enviado un correo electrónico con un enlace para establecer la contraseña.',
-        returnBtn: 'Volver al Inicio de Sesión',
+        returnLink: 'Volver al Inicio de Sesión',
         teamRequired: 'El ID del equipo es obligatorio.',
         emailRequired: 'El correo electrónico es obligatorio.',
     },
@@ -32,7 +32,7 @@ const pageText = {
         emailLabel: 'Email do Participante',
         submitBtn: 'Enviar Link de Senha',
         successMsg: 'Se as informações corresponderem aos nossos registros, um email foi enviado com um link para definir a senha.',
-        returnBtn: 'Voltar ao Login',
+        returnLink: 'Voltar ao Login',
         teamRequired: 'O ID da equipe é obrigatório.',
         emailRequired: 'O email é obrigatório.',
     }
@@ -45,7 +45,6 @@ export default function RequestPassword() {
     const actualText = pageText[currentLanguage];
 
     const [showSuccess, setShowSuccess] = useState(false);
-    const navigate = useNavigate(); 
 
     const {
         register,
@@ -105,8 +104,8 @@ export default function RequestPassword() {
                     {actualText.successMsg}
                 </Alert>
 
-                <div className='d-grid gap-2'>
-                    <Button variant='primary' onClick={() => navigate('/login')}>{actualText.returnBtn}</Button>
+                <div className=' text-center mt-3'>
+                    <Link className='text-muted fw-semibold' to='/login'>{actualText.returnLink}</Link>
                 </div>
             </>
         )}
