@@ -51,8 +51,8 @@ export default function Login() {
     const {
         register,
         handleSubmit,
-        resetField, 
-        setFocus, 
+        resetField,
+        setFocus,
         formState: { errors, isSubmitting }
     } = useForm({
         defaultValues: {
@@ -62,16 +62,16 @@ export default function Login() {
     })
 
     const handleFormSubmit = async (someData) => {
-        
+
         try {
-            await api.post('written/auth/login', {
-                teamID: someData.teamID, 
-                password: someData.teamPassword
+            await api.post('/api/participants/login', {
+                teamID: someData.teamID,
+                teamPassword: someData.teamPassword
             });
-            navigate('/upload', {replace: true });
+            navigate('/upload', { replace: true });
         } catch (err) {
-            setAuthError(actualText.invalidCredentials); 
-            resetField('teamPassword'); 
+            setAuthError(actualText.invalidCredentials);
+            resetField('teamPassword');
             setFocus('teamPassword');
         }
 
@@ -83,7 +83,7 @@ export default function Login() {
         </Card>
 
         {authError && (
-            <Alert variant='danger' className='mx-4 text-center'>{authError}</Alert>
+            <Alert variant='danger' className='mx-4 text-center fw-semibold'>{authError}</Alert>
         )}
 
         <Form onSubmit={handleSubmit(handleFormSubmit)} noValidate>
@@ -104,7 +104,7 @@ export default function Login() {
                 <div className='d-flex align-items-center'>
                     <Form.Label className='fw-bold text-nowrap d-flex align-items-center mb-0 me-2' style={{ height: '38px' }}>{actualText.passwordLabel}</Form.Label>
                     <Form.Control type='password' autoComplete='current-password' isInvalid={!!errors.teamPassword} {...register('teamPassword', {
-                        required: actualText.passwordRequired, 
+                        required: actualText.passwordRequired,
                         onChange: () => authError && setAuthError('')
                     })} />
                 </div>

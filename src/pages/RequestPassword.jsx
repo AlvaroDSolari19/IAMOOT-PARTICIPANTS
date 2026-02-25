@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Alert, Button, Card, Form } from 'react-bootstrap';
 
 import { LanguageContext } from '../context/LanguageContext';
+import api from '../services/api';
 
 const pageText = {
     EN: {
@@ -12,7 +13,7 @@ const pageText = {
         emailLabel: 'Participant Email',
         submitBtn: 'Send Password Link',
         successMsg: 'If the information matches our records, an email has been sent with a password setup link.',
-        returnLink: 'Return to Login', 
+        returnLink: 'Return to Login',
         teamRequired: 'Team ID is required.',
         emailRequired: 'Email is required.'
     },
@@ -59,8 +60,17 @@ export default function RequestPassword() {
     })
 
     const handleFormSubmit = async (someData) => {
-        setShowSuccess(true);
-        reset();
+        try {
+            await api.post('/api/participants/request-password', {
+                teamID: someData.teamID,
+                requestEmail: someData.participantEmail
+            })
+        } catch (err) {
+            console.error('request-password failed: ' + err)
+        } finally {
+            setShowSuccess(true);
+            reset();
+        }
     }
 
     return <div>
@@ -72,7 +82,7 @@ export default function RequestPassword() {
             <Form.Group className='mb-3 px-4'>
                 <div className='d-flex align-items-center'>
                     <Form.Label className='fw-bold text-nowrap d-flex align-items-center mb-0 me-2' style={{ height: '38px' }}>{actualText.teamLabel}</Form.Label>
-                    <Form.Control disabled={showSuccess} isInvalid={!!errors.teamID} {...register('teamID', {
+                    <Form.Control disabled={showSuccess || isSubmitting} isInvalid={!!errors.teamID} {...register('teamID', {
                         required: actualText.teamRequired
                     })} />
                 </div>
@@ -84,7 +94,7 @@ export default function RequestPassword() {
             <Form.Group className='mb-3 px-4' >
                 <div className='d-flex align-items-center'>
                     <Form.Label className='fw-bold text-nowrap d-flex align-items-center mb-0 me-2' style={{ height: '38px' }}>{actualText.emailLabel}</Form.Label>
-                    <Form.Control type='email' disabled={showSuccess} isInvalid={!!errors.participantEmail} {...register('participantEmail', {
+                    <Form.Control type='email' disabled={showSuccess || isSubmitting} isInvalid={!!errors.participantEmail} {...register('participantEmail', {
                         required: actualText.emailRequired
                     })} />
                 </div>
@@ -94,7 +104,7 @@ export default function RequestPassword() {
             </Form.Group>
 
             <div className='d-grid gap-2'>
-                <Button type='submit' disabled={showSuccess}>{actualText.submitBtn}</Button>
+                <Button type='submit' disabled={showSuccess || isSubmitting}>{actualText.submitBtn}</Button>
             </div>
         </Form>
 

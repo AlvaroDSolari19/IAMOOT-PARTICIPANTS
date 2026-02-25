@@ -1,9 +1,10 @@
 import { useContext, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { Alert, Button, Card, Form } from 'react-bootstrap';
 
 import { LanguageContext } from '../context/LanguageContext';
+import api from '../services/api';
 
 const pageText = {
     EN: {
@@ -14,8 +15,9 @@ const pageText = {
         confirmPasswordRequired: 'Please confirm your password.',
         passwordsMustMatch: 'Passwords do not match.',
         submitBtn: 'Set Password',
+        invalidLink: 'This link is invalid or expired. Please request a new password link.',
+        requestNewLink: 'Request New Password Link',
         successMsg: 'Your password has been set successfully. You may now log in.',
-        errorMsg: 'Passwords do not match.',
         returnLink: 'Return to Login'
     },
     ES: {
@@ -26,9 +28,10 @@ const pageText = {
         confirmPasswordRequired: 'Por favor confirma tu contraseña.',
         passwordsMustMatch: 'Las contraseñas no coinciden.',
         submitBtn: 'Establecer Contraseña',
+        invalidLink: 'Este enlace es inválido o ha expirado. Por favor solicita un nuevo enlace de contraseña.',
+        requestNewLink: 'Solicitar Nuevo Enlace de Contraseña',
         successMsg: 'Tu contraseña se ha establecido correctamente. Ahora puedes iniciar sesión.',
-        errorMsg: 'Las contraseñas no coinciden.',
-        returnLink: 'Volver a Iniciar Sesión'
+        returnLink: 'Volver a Iniciar Sesión',
     },
     POR: {
         mainTitle: 'IAMOOT 2026 - Definir Senha',
@@ -38,8 +41,9 @@ const pageText = {
         confirmPasswordRequired: 'Por favor, confirme sua senha.',
         passwordsMustMatch: 'As senhas não coincidem.',
         submitBtn: 'Definir Senha',
+        invalidLink: 'Este link é inválido ou expirou. Por favor, solicite um novo link de senha.',
+        requestNewLink: 'Solicitar Novo Link de Senha',
         successMsg: 'Sua senha foi definida com sucesso. Agora você pode entrar.',
-        errorMsg: 'As senhas não coincidem.',
         returnLink: 'Voltar para Login'
     }
 }
@@ -51,6 +55,12 @@ export default function SetPassword() {
     const actualText = pageText[currentLanguage]
 
     const [showSuccess, setShowSuccess] = useState(false);
+    const [showError, setShowError] = useState(false); 
+    
+    const [searchParams] = useSearchParams(); 
+    const teamIDParam = searchParams.get('teamID') || ''; 
+    const resetTokenParam = searchParams.get('token') || ''; 
+    const hasValidParam = Boolean(teamIDParam && resetTokenParam);
 
     const {
         register,
@@ -68,8 +78,19 @@ export default function SetPassword() {
     const newPasswordValue = watch('newPassword');
 
     const handleFormSubmit = async (someData) => {
-        setShowSuccess(true);
-        reset();
+        try {
+            await api.post('/api/participants/set-password', {
+                teamID: teamIDParam,
+                resetToken: resetTokenParam, 
+                newPassword: someData.newPassword
+            });
+
+            setShowSuccess(true)
+            reset(); 
+        } catch (err) {
+            setShowError(true);
+            reset(); 
+        }
     }
 
     return <div>
@@ -77,11 +98,15 @@ export default function SetPassword() {
             <Card.Header as='h1' className='display-5 fw-bold'>{actualText.mainTitle}</Card.Header>
         </Card>
 
+        {showError && (
+            <Alert variant='danger' className='mx-4 text-center fw-semibold'>{actualText.invalidLink}</Alert>
+        )}
+
         <Form onSubmit={handleSubmit(handleFormSubmit)} noValidate>
             <Form.Group className='mb-3 px-4'>
                 <div className='d-flex align-items-center'>
                     <Form.Label className='fw-bold text-nowrap d-flex align-items-center mb-0 me-2' style={{ height: '38px' }}>{actualText.passwordLabel}</Form.Label>
-                    <Form.Control type='password' disabled={showSuccess || isSubmitting} isInvalid={!!errors.newPassword} {...register('newPassword', {
+                    <Form.Control type='password' disabled={showSuccess || showError || isSubmitting} isInvalid={!!errors.newPassword} {...register('newPassword', {
                         required: actualText.passwordRequired
                     })} />
                 </div>
@@ -93,7 +118,7 @@ export default function SetPassword() {
             <Form.Group className='mb-3 px-4' >
                 <div className='d-flex align-items-center'>
                     <Form.Label className='fw-bold text-nowrap d-flex align-items-center mb-0 me-2' style={{ height: '38px' }}>{actualText.confirmPasswordLabel}</Form.Label>
-                    <Form.Control type='password' disabled={showSuccess || isSubmitting} isInvalid={!!errors.confirmPassword} {...register('confirmPassword', {
+                    <Form.Control type='password' disabled={showSuccess || showError || isSubmitting} isInvalid={!!errors.confirmPassword} {...register('confirmPassword', {
                         required: actualText.confirmPasswordRequired,
                         validate: (currentValue) => currentValue === newPasswordValue || actualText.passwordsMustMatch
                     })} />
@@ -104,9 +129,15 @@ export default function SetPassword() {
             </Form.Group>
 
             <div className='d-grid gap-2'>
-                <Button type='submit' disabled={showSuccess || isSubmitting}>{actualText.submitBtn}</Button>
+                <Button type='submit' disabled={showSuccess || showError || isSubmitting}>{actualText.submitBtn}</Button>
             </div>
         </Form>
+
+        {showError && (
+            <div className='text-center mt-3'>
+                <Link className='text-muted fw-semibold' to='/request-password'>{actualText.requestNewLink}</Link>
+            </div>
+        )}
 
         {showSuccess && (
             <>

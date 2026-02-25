@@ -11,13 +11,6 @@ function App() {
   return (
     <LanguageProvider>
       <BrowserRouter>
-        <nav>
-          <a href="/">Language</a> |{' '}
-          <a href="/login">Login</a> |{' '}
-          <a href="/request-password">Request Password</a> |{' '}
-          <a href="/set-password">Set Password</a> |{' '}
-          <a href="/upload">Upload</a> |{' '}
-        </nav>
         <Routes>
           <Route path='/' element={<LanguageSelection />} />
           <Route path='/login' element={<Login />} />
