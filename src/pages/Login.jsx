@@ -64,10 +64,14 @@ export default function Login() {
     const handleFormSubmit = async (someData) => {
 
         try {
-            await api.post('/api/participants/login', {
+            const loginResponse = await api.post('/api/participants/login', {
                 teamID: someData.teamID,
                 teamPassword: someData.teamPassword
             });
+
+            const authToken = loginResponse.data?.token; 
+            if (authToken) localStorage.setItem('writtenTeamToken', authToken); 
+
             navigate('/upload', { replace: true });
         } catch (err) {
             setAuthError(actualText.invalidCredentials);

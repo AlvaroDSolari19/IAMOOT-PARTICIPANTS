@@ -1,9 +1,10 @@
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { Alert, Button, Card, Form, ListGroup } from 'react-bootstrap'
 
 import { LanguageContext } from '../context/LanguageContext'
+import api from '../services/api';
 
 const pageText = {
     EN: {
@@ -90,8 +91,33 @@ export default function Upload() {
     const SUBMISSION_DEADLINE_UTC = '2026-03-26T03:59:00Z';
     const isDeadlinePassed = new Date() > new Date(SUBMISSION_DEADLINE_UTC);
 
+    const [isAuthLoading, setIsAuthLoading] = useState(true); 
     const [submissionReceipt, setSubmissionReceipt] = useState(null);
     const navigate = useNavigate();
+
+    /* VALIDATES AUTHENTICATED SESSION (JWT CHECK) */
+    useEffect( () => { 
+        
+        const validateSession = async () => {
+            const storedToken = localStorage.getItem('writtenTeamToken'); 
+            
+            if (!storedToken){
+                navigate('/', { replace: true });
+                return; 
+            }
+
+            try {
+                await api.get('/api/participants/me'); 
+                setIsAuthLoading(false); 
+            } catch (requestError) {
+                localStorage.removeItem('writtenTeamToken'); 
+                navigate('/', { replace: true }); 
+            }   
+        }
+
+        validateSession();
+
+    }, [navigate]);
 
     const {
         register,
@@ -114,9 +140,12 @@ export default function Upload() {
     }
 
     const handleLogout = () => {
+        localStorage.removeItem('writtenTeamToken'); 
         setSubmissionReceipt(null); 
         navigate('/');
     }
+
+    if (isAuthLoading) return null; 
 
     return <div>
         <Card className='text-center'>
