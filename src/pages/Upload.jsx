@@ -11,10 +11,9 @@ const pageText = {
         mainTitle: 'IAMOOT 2026 - Upload Memoranda',
         introText: 'Before submitting your files, please review the following requirements:',
         requirements: {
-            naming:
-                'File naming convention: Files must be named using your Team ID followed by V (Victim) or E (State). Example: TEAM123_V.docx and TEAM123_E.docx',
             format: 'Accepted format: Only .docx files are accepted.',
-            deadline: 'Submission deadline: March 25th, 11:59 PM ET (New York / UTC-4).'
+            deadline: 'Submission deadline: March 25th, 11:59 PM ET (New York / UTC-4).',
+            lateSubmission: 'Late submissions: Any submission entered after March 25th may incur a score penalty.'
         },
         stateLabel: 'State Memorandum',
         victimLabel: 'Victim Memorandum',
@@ -35,10 +34,9 @@ const pageText = {
         mainTitle: 'IAMOOT 2026 - Subir Memorandos',
         introText: 'Antes de enviar tus archivos, revisa los siguientes requisitos:',
         requirements: {
-            naming:
-                'Convención de nombres: Los archivos deben nombrarse usando el ID del equipo seguido de V (Víctima) o E (Estado). Ejemplo: TEAM123_V.docx y TEAM123_E.docx',
             format: 'Formato aceptado: Solo se aceptan archivos .docx.',
-            deadline: 'Fecha límite de envío: 25 de marzo, 11:59 PM ET (Nueva York / UTC-4).'
+            deadline: 'Fecha límite de envío: 25 de marzo, 11:59 PM ET (Nueva York / UTC-4).',
+            lateSubmission: 'Envíos tardíos: Cualquier envío realizado después del 25 de marzo puede incurrir en una penalización de puntaje.'
         },
         stateLabel: 'Memorando del Estado',
         victimLabel: 'Memorando de la Víctima',
@@ -59,10 +57,9 @@ const pageText = {
         mainTitle: 'IAMOOT 2026 - Enviar Memorandos',
         introText: 'Antes de enviar seus arquivos, revise os seguintes requisitos:',
         requirements: {
-            naming:
-                'Convenção de nomes: Os arquivos devem ser nomeados usando o ID da equipe seguido de V (Vítima) ou E (Estado). Exemplo: TEAM123_V.docx e TEAM123_E.docx',
             format: 'Formato aceito: Apenas arquivos .docx são aceitos.',
-            deadline: 'Prazo de envio: 25 de março, 11:59 PM ET (Nova York / UTC-4).'
+            deadline: 'Prazo de envio: 25 de março, 11:59 PM ET (Nova York / UTC-4).',
+            lateSubmission: 'Envios tardios: Qualquer envio realizado após 25 de março pode incorrer em penalização na pontuação.'
         },
         stateLabel: 'Memorando do Estado',
         victimLabel: 'Memorando da Vítima',
@@ -197,9 +194,9 @@ export default function Upload() {
                     <Card.Body className='px-4'>
                         <Card.Title className='fw-bold mb-2'>{actualText.introText}</Card.Title>
                         <ListGroup variant='flush'>
-                            <ListGroup.Item>{actualText.requirements.naming}</ListGroup.Item>
                             <ListGroup.Item>{actualText.requirements.format}</ListGroup.Item>
                             <ListGroup.Item>{actualText.requirements.deadline}</ListGroup.Item>
+                            <ListGroup.Item>{actualText.requirements.lateSubmission}</ListGroup.Item>
                         </ListGroup>
                     </Card.Body>
                 </Card>
