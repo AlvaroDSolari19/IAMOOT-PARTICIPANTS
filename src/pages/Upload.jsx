@@ -107,8 +107,19 @@ export default function Upload() {
             }
 
             try {
-                await api.get('/api/participants/me'); 
-                setIsAuthLoading(false); 
+                const statusResponse = await api.get('/api/participants/memoranda-status'); 
+                const statusData = statusResponse.data; 
+
+                if (statusData.hasSubmitted){
+                    setSubmissionReceipt({
+                        submittedAtISO: statusData.submission.submittedAt, 
+                        stateFilename: statusData.submission.stateOriginalFilename, 
+                        victimFilename: statusData.submission.victimOriginalFilename
+                    })
+                }
+
+                setIsAuthLoading(false);
+
             } catch (requestError) {
                 localStorage.removeItem('writtenTeamToken'); 
                 navigate('/', { replace: true }); 
@@ -132,10 +143,17 @@ export default function Upload() {
     })
 
     const handleFormSubmit = async (someData) => {
+
+        const uploadFormData = new FormData(); 
+        uploadFormData.append('stateMemorandum', someData.stateFile[0]); 
+        uploadFormData.append('victimMemorandum', someData.victimFile[0]);
+
+        await api.post('/api/participants/upload-submission', uploadFormData); 
+
         setSubmissionReceipt({
             submittedAtISO: new Date().toISOString(),
-            stateFileName: someData.stateFile?.[0]?.name ?? '',
-            victimFileName: someData.victimFile?.[0]?.name ?? ''
+            stateFilename: someData.stateFile?.[0]?.name ?? '',
+            victimFilename: someData.victimFile?.[0]?.name ?? ''
         })
     }
 
@@ -145,7 +163,9 @@ export default function Upload() {
         navigate('/');
     }
 
-    if (isAuthLoading) return null; 
+    if (isAuthLoading) {
+        return <div className='text-center mt-5'>Loading...</div>
+    }; 
 
     return <div>
         <Card className='text-center'>
@@ -155,13 +175,13 @@ export default function Upload() {
         {submissionReceipt && (
             <Card>
                 <Card.Body>
-                    <Card.Title className='text-success fw-bold'>{actualText.successMsg}</Card.Title>
+                    <Card.Title className='fw-bold'>{actualText.successMsg}</Card.Title>
                     <ListGroup variant='flush' className='mt-3'>
                         <ListGroup.Item>
-                            <strong>{actualText.stateLabel}:</strong> {submissionReceipt.stateFileName}
+                            <strong>{actualText.stateLabel}:</strong> {submissionReceipt.stateFilename}
                         </ListGroup.Item>
                         <ListGroup.Item>
-                            <strong>{actualText.victimLabel}:</strong> {submissionReceipt.victimFileName}
+                            <strong>{actualText.victimLabel}:</strong> {submissionReceipt.victimFilename}
                         </ListGroup.Item>
                         <ListGroup.Item>
                             <strong>{actualText.submittedAtLabel}:</strong> {new Date(submissionReceipt.submittedAtISO).toLocaleString()}
