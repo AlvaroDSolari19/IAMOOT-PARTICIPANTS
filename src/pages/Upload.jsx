@@ -85,7 +85,7 @@ export default function Upload() {
     const actualText = pageText[currentLanguage];
 
     /* SETS THE SUBMISSION DEADLINE */
-    const SUBMISSION_DEADLINE_UTC = '2026-04-10T03:59:00Z';
+    const SUBMISSION_DEADLINE_UTC = '2026-04-11T03:59:00Z';
     const isDeadlinePassed = new Date() > new Date(SUBMISSION_DEADLINE_UTC);
 
     const [isAuthLoading, setIsAuthLoading] = useState(true); 
